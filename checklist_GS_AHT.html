@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Checklist Giám sát Nhà ga</title>
+<style>
+  :root{
+    --bg:#0c1016;
+    --bg-glow:#141b25;
+    --panel:#171f2a;
+    --panel-2:#1e2733;
+    --panel-3:#26313f;
+    --line:#2a3542;
+    --line-soft:#212a36;
+    --text:#eef1f5;
+    --muted:#8593a6;
+
+    --brand:#4c8dff;
+    --brand-dim:#132a4d;
+    --on-brand:#06162e;
+
+    --cat-hygiene:#2dd4bf;
+    --cat-hygiene-dim:#0e3a35;
+    --cat-equip:#b18cfa;
+    --cat-equip-dim:#302150;
+
+    --ok:#2fd06b;
+    --ok-dim:#0f3524;
+    --bad:#f65f56;
+    --bad-dim:#3d1614;
+
+    --bar-bg:rgba(12,16,22,0.92);
+    --radius-lg:18px;
+    --radius:12px;
+    --radius-sm:9px;
+
+    --shadow-sm:0 1px 2px rgba(0,0,0,.3), 0 4px 10px -4px rgba(0,0,0,.35);
+    --shadow-lg:0 2px 4px rgba(0,0,0,.3), 0 16px 36px -12px rgba(0,0,0,.5);
+  }
+  html[data-theme="light"]{
+    --bg:#eef1f6;
+    --bg-glow:#ffffff;
+    --panel:#ffffff;
+    --panel-2:#f3f5f8;
+    --panel-3:#e8ebf0;
+    --line:#dde2e9;
+    --line-soft:#e6e9ee;
+    --text:#141a24;
+    --muted:#5c6676;
+
+    --brand:#2f6fed;
+    --brand-dim:#e4edff;
+    --on-brand:#ffffff;
+
+    --cat-hygiene:#0d9488;
+    --cat-hygiene-dim:#e3f8f5;
+    --cat-equip:#7c3aed;
+    --cat-equip-dim:#f1ebfe;
+
+    --ok:#178a4c;
+    --ok-dim:#e3f8ec;
+    --bad:#d1372f;
+    --bad-dim:#fdeceb;
+
+    --bar-bg:rgba(255,255,255,0.86);
+
+    --shadow-sm:0 1px 2px rgba(20,26,36,.05), 0 4px 10px -4px rgba(20,26,36,.08);
+    --shadow-lg:0 2px 6px rgba(20,26,36,.06), 0 20px 40px -16px rgba(20,26,36,.16);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(1100px 560px at 50% -12%, var(--bg-glow) 0%, var(--bg) 55%);
+    color:var(--text);
+    font-family:'Times New Roman', Times, serif;
+    min-height:100vh;
+    transition:background .2s, color .2s;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--brand-dim); color:var(--text);}
+  button, input{font-family:inherit;}
+
+  /* ============ LOGIN VIEW ============ */
+  #loginView{
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .login-card{
+    width:100%; max-width:392px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-lg);
+    padding:0 30px 30px;
+    overflow:hidden;
+  }
+  .login-topbar{
+    height:5px; margin:0 -30px 26px;
+    background:linear-gradient(90deg, var(--brand), var(--cat-hygiene));
+  }
+  .login-badge{
+    width:52px; height:52px; border-radius:14px;
+    background:var(--brand-dim); color:var(--brand);
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 18px;
+  }
+  .login-eyebrow{
+    font-family:'Times New Roman', Times, serif;
+    font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--brand); text-align:center; margin-bottom:8px; font-weight:600;
+  }
+  .login-title{
+    font-family:'Times New Roman', Times, serif;
+    font-size:19px; font-weight:700; text-align:center;
+    margin-bottom:5px; letter-spacing:.01em;
+  }
+  .login-sub{
+    font-size:13.5px; color:var(--muted); text-align:center; margin-bottom:28px;
+  }
+  .login-field{margin-bottom:16px;}
+  .login-field label{
+    display:block; font-size:12px; font-weight:600; color:var(--muted); margin-bottom:7px;
+  }
+  .login-field input, .login-field select{
+    width:100%; background:var(--panel-2); border:1.5px solid var(--line);
+    border-radius:var(--radius-sm); color:var(--text); font-size:15px; padding:12px 13px;
+    outline:none; transition:border-color .15s, box-shadow .15s;
+  }
+  .login-field input:focus, .login-field select:focus{border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-dim);}
+  .login-btn{
+    width:100%; padding:14px; border:none; border-radius:var(--radius-sm);
+    background:var(--brand); color:var(--on-brand); font-size:15px; font-weight:700;
+    cursor:pointer; margin-top:6px; box-shadow:var(--shadow-sm);
+    transition:transform .1s, opacity .15s;
+  }
+  .login-btn:active{opacity:.88; transform:translateY(1px);}
+  .login-error{
+    color:var(--bad); font-size:12.5px; text-align:center;
+    margin-top:12px; display:none; font-weight:600;
+  }
+  .login-note{
+    margin-top:22px; padding-top:16px; border-top:1px solid var(--line);
+    font-size:11.5px; color:var(--muted); line-height:1.6; text-align:center;
+  }
+
+  /* ============ MAIN VIEW ============ */
+  #mainView{display:none; min-height:100vh; padding-bottom:96px;}
+
+  .topbar{
+    position:sticky; top:0; z-index:20;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:13px 18px;
+    background:var(--bar-bg);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .brand-group{display:flex; align-items:center; gap:11px;}
+  .topbar .brand-badge{
+    width:34px; height:34px; border-radius:10px; flex:none;
+    background:var(--brand-dim); color:var(--brand);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .topbar .brand{display:flex; flex-direction:column; gap:1px;}
+  .topbar .eyebrow{
+    font-family:'Times New Roman', Times, serif; font-size:10px; letter-spacing:.13em;
+    color:var(--brand); text-transform:uppercase; font-weight:600;
+  }
+  .topbar .title{
+    font-family:'Times New Roman', Times, serif; font-size:14px; font-weight:700;
+  }
+  .topbar .userbox{display:flex; align-items:center; gap:8px;}
+  .topbar .username{
+    font-size:12px; color:var(--muted); font-family:'Times New Roman', Times, serif;
+    max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .icon-btn{
+    display:flex; align-items:center; justify-content:center;
+    width:34px; height:34px; flex:none;
+    background:var(--panel-2); border:1px solid var(--line); border-radius:var(--radius-sm);
+    color:var(--muted); cursor:pointer; transition:border-color .15s, color .15s;
+  }
+  .icon-btn:active{border-color:var(--brand); color:var(--brand);}
+  .logout-btn{
+    background:var(--panel-2); border:1px solid var(--line); color:var(--muted);
+    font-size:12px; font-weight:600; padding:8px 13px; border-radius:var(--radius-sm); cursor:pointer;
+  }
+  .logout-btn:active{border-color:var(--bad); color:var(--bad);}
+
+  main{max-width:660px; margin:0 auto; padding:20px 18px;}
+
+  .eyebrow-label{
+    font-family:'Times New Roman', Times, serif; font-size:10.5px; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:10px;
+  }
+
+  .location-select-wrap{
+    position:relative; margin-bottom:24px;
+  }
+  .location-select{
+    width:100%; appearance:none; -webkit-appearance:none; -moz-appearance:none;
+    font-family:'Times New Roman', Times, serif; font-size:15px; font-weight:600;
+    padding:14px 42px 14px 16px; border-radius:var(--radius-sm); border:1.5px solid var(--line);
+    background:var(--panel); color:var(--text); cursor:pointer;
+    box-shadow:var(--shadow-sm);
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .location-select:focus{outline:none; border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-dim);}
+  .location-select-wrap::after{
+    content:''; position:absolute; right:16px; top:50%; margin-top:-3px;
+    width:9px; height:9px; pointer-events:none;
+    border-right:2px solid var(--muted); border-bottom:2px solid var(--muted);
+    transform:rotate(45deg);
+  }
+
+  .dash-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-sm); padding:20px; margin-bottom:26px;
+  }
+  .dash-head{
+    display:flex; align-items:center; gap:18px;
+  }
+  .ring-wrap{position:relative; width:66px; height:66px; flex:none;}
+  .ring-wrap svg{transform:rotate(-90deg);}
+  .ring-pct{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:'Times New Roman', Times, serif; font-size:13.5px; font-weight:700;
+  }
+  .progress-stats{flex:1; display:grid; grid-template-columns:1fr 1fr 1fr;}
+  .pstat{text-align:center; padding:0 6px;}
+  .pstat:not(:last-child){border-right:1px solid var(--line-soft);}
+  .pstat .num{font-family:'Times New Roman', Times, serif; font-size:19px; font-weight:700;}
+  .pstat .lbl{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-top:3px; font-weight:600;}
+  .pstat.ok .num{color:var(--ok);}
+  .pstat.bad .num{color:var(--bad);}
+
+  .cat-block{margin-bottom:8px;}
+  .cat-block + .cat-block{margin-top:30px;}
+  .cat-chip{
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:'Times New Roman', Times, serif; font-size:11.5px; font-weight:700;
+    letter-spacing:.06em; text-transform:uppercase;
+    padding:8px 14px; border-radius:20px; margin-bottom:14px;
+  }
+  .cat-chip .dot{width:7px; height:7px; border-radius:50%;}
+  .cat-chip.hygiene{background:var(--cat-hygiene-dim); color:var(--cat-hygiene);}
+  .cat-chip.hygiene .dot{background:var(--cat-hygiene);}
+  .cat-chip.equip{background:var(--cat-equip-dim); color:var(--cat-equip);}
+  .cat-chip.equip .dot{background:var(--cat-equip);}
+
+  .item-row{
+    display:flex; align-items:flex-start; gap:13px;
+    background:var(--panel); border:1px solid var(--line); border-left-width:4px;
+    border-radius:var(--radius); box-shadow:var(--shadow-sm);
+    padding:14px 15px; margin-bottom:11px;
+  }
+  .item-row.hygiene{border-left-color:var(--cat-hygiene);}
+  .item-row.equip{border-left-color:var(--cat-equip);}
+  .item-stt{
+    flex:none; width:27px; height:27px; border-radius:8px;
+    background:var(--panel-2); color:var(--muted);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Times New Roman', Times, serif; font-size:12px; font-weight:700;
+  }
+  .item-body{flex:1; min-width:0;}
+  .item-text{font-size:13.8px; line-height:1.55; margin-bottom:12px;}
+  .item-toggle{display:flex; gap:8px;}
+  .tbtn{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:5px;
+    text-align:center; padding:9px 8px; border-radius:var(--radius-sm);
+    border:1.5px solid var(--line); background:var(--panel-2); color:var(--muted);
+    font-size:12.5px; font-weight:700; cursor:pointer; user-select:none;
+    transition:all .12s;
+  }
+  .tbtn svg{width:14px; height:14px; flex:none;}
+  .tbtn.dat.sel{background:var(--ok-dim); border-color:var(--ok); color:var(--ok);}
+  .tbtn.khong.sel{background:var(--bad-dim); border-color:var(--bad); color:var(--bad);}
+
+  .sync-status{
+    margin-top:9px; font-size:11.5px; display:flex; align-items:center; gap:5px;
+  }
+  .sync-status svg{flex:none;}
+  .sync-status.saving{color:var(--muted);}
+  .sync-status.saved{color:var(--ok); font-weight:600;}
+  .sync-status.error{color:var(--bad); font-weight:600; cursor:pointer; text-decoration:underline; text-underline-offset:2px;}
+
+  .item-detail{
+    margin-top:13px; padding:13px; border-radius:var(--radius-sm);
+    background:var(--bad-dim); border:1px solid color-mix(in srgb, var(--bad) 35%, transparent);
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .detail-field label{
+    display:block; font-family:'Times New Roman', Times, serif; font-size:10.5px;
+    letter-spacing:.06em; text-transform:uppercase; color:var(--bad); margin-bottom:7px; font-weight:700;
+  }
+  .detail-field textarea{
+    width:100%; background:var(--panel); border:1.5px solid var(--line);
+    border-radius:8px; color:var(--text); font-size:13.5px; padding:10px 11px;
+    outline:none; resize:vertical; min-height:64px; font-family:inherit;
+  }
+  .detail-field textarea:focus{border-color:var(--bad);}
+  .detail-photo-tile{
+    display:flex; align-items:center; gap:10px;
+    border:1.5px dashed var(--line); border-radius:8px; padding:11px;
+    cursor:pointer; background:var(--panel);
+  }
+  .detail-photo-tile .icon{
+    width:32px; height:32px; flex:none; border-radius:8px;
+    background:var(--bad-dim); color:var(--bad);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .detail-photo-tile .txt{font-size:12.5px; color:var(--muted);}
+  .detail-photo-tile .txt b{color:var(--text); display:block; font-size:13px;}
+  .detail-preview{margin-top:2px; border-radius:8px; overflow:hidden; border:1px solid var(--line);}
+  .detail-preview img{width:100%; display:block; max-height:160px; object-fit:cover;}
+
+  .bottom-bar{
+    position:fixed; bottom:0; left:0; right:0; z-index:20;
+    background:var(--bar-bg); backdrop-filter:blur(8px);
+    border-top:1px solid var(--line);
+    padding:13px 18px; display:flex; justify-content:center;
+  }
+  .save-btn{
+    width:100%; max-width:624px; padding:14px; border:none; border-radius:var(--radius-sm);
+    background:var(--brand); color:var(--on-brand); font-size:14.5px; font-weight:700;
+    cursor:pointer; box-shadow:var(--shadow-sm);
+  }
+  .save-btn:active{opacity:.88;}
+
+  .toast{
+    position:fixed; left:50%; bottom:90px; transform:translateX(-50%);
+    background:var(--panel-3); border:1px solid var(--brand); color:var(--text);
+    font-family:'Times New Roman', Times, serif; font-size:12.5px;
+    padding:11px 16px; border-radius:var(--radius-sm); max-width:88%; text-align:center;
+    z-index:30; opacity:0; pointer-events:none; transition:opacity .25s;
+    box-shadow:var(--shadow-lg);
+  }
+  .toast.show{opacity:1;}
+  .toast.error{border-color:var(--bad);}
+  .toast.ok{border-color:var(--ok);}
+</style>
+</head>
+<body>
+
+  <!-- ============ LOGIN VIEW ============ -->
+  <div id="loginView">
+    <form class="login-card" id="loginForm">
+      <div class="login-topbar"></div>
+      <div class="login-badge">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="4" width="14" height="17" rx="2"/>
+          <path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+      </div>
+      <div class="login-eyebrow">Trạm giám sát</div>
+      <div class="login-title">CHECKLIST GIÁM SÁT NHÀ GA</div>
+      <div class="login-sub">Đăng nhập để bắt đầu ca giám sát</div>
+
+      <div class="login-field">
+        <label for="loginName">Họ tên / Mã nhân viên</label>
+        <input type="text" id="loginName" placeholder="VD: Nguyễn Văn A" required>
+      </div>
+      <div class="login-field">
+        <label for="loginPass">Mật khẩu</label>
+        <input type="password" id="loginPass" placeholder="••••••••" required>
+      </div>
+      <div class="login-field">
+        <label for="loginCa">Ca làm việc</label>
+        <select id="loginCa">
+          <option value="Ca sáng">Ca sáng</option>
+          <option value="Ca chiều">Ca chiều</option>
+          <option value="Ca tối">Ca tối</option>
+        </select>
+      </div>
+
+      <button type="submit" class="login-btn">Đăng nhập</button>
+      <div class="login-error" id="loginError">Vui lòng nhập đầy đủ họ tên và mật khẩu.</div>
+
+      <div class="login-note">Đây là bản xem giao diện (demo) — mọi mật khẩu đều được chấp nhận. Xác thực thật sẽ được gắn ở bước triển khai tiếp theo.</div>
+    </form>
+  </div>
+
+  <!-- ============ MAIN VIEW ============ -->
+  <div id="mainView">
+    <div class="topbar">
+      <div class="brand-group">
+        <div class="brand-badge">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="4" width="14" height="17" rx="2"/>
+            <path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <div class="brand">
+          <span class="eyebrow">Đang giám sát</span>
+          <span class="title">CHECKLIST NHÀ GA</span>
+        </div>
+      </div>
+      <div class="userbox">
+        <span class="username" id="userDisplay"></span>
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="Chuyển giao diện sáng/tối" title="Chuyển giao diện sáng/tối">
+          <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+        </button>
+        <button class="logout-btn" id="logoutBtn">Đăng xuất</button>
+      </div>
+    </div>
+
+    <main>
+      <div class="eyebrow-label">Vị trí giám sát</div>
+      <div class="location-select-wrap">
+        <select class="location-select" id="locationSelect"></select>
+      </div>
+
+      <div class="dash-card">
+        <div class="eyebrow-label" style="margin-bottom:16px;">Tổng quan</div>
+        <div class="dash-head">
+          <div class="ring-wrap">
+            <svg width="66" height="66" viewBox="0 0 66 66">
+              <circle id="ringBg" cx="33" cy="33" r="28" fill="none" stroke-width="6"/>
+              <circle id="ringFg" cx="33" cy="33" r="28" fill="none" stroke-width="6"
+                stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+            </svg>
+            <div class="ring-pct" id="ringPct">0%</div>
+          </div>
+          <div class="progress-stats">
+            <div class="pstat"><div class="num" id="statTotal">0</div><div class="lbl">Hạng mục</div></div>
+            <div class="pstat ok"><div class="num" id="statOk">0</div><div class="lbl">Đạt</div></div>
+            <div class="pstat bad"><div class="num" id="statBad">0</div><div class="lbl">Không đạt</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="checklistBody"></div>
+    </main>
+
+    <div class="bottom-bar">
+      <button class="save-btn" id="saveBtn">Hoàn tất kiểm tra vị trí này</button>
+    </div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+<script>
+  // Đường dẫn tới Apps Script backend (Google Sheet) — mọi dữ liệu checklist gửi về đây
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNwaSrWWJ8ZxH2mOHqBh_f4oopOn7TfMMeLLzAI-lziqK9zkygPyic2_uZiJrFpUTW/exec";
+
+  const CHECKLIST_DATA = {"GSCC GA ĐI": [{"title": "TÌNH TRẠNG VỆ SINH", "items": [{"stt": 1, "text": "Vệ sinh chung (ghế ngồi, bề mặt sàn, thùng rác, tường kính, thang máy,…)"}, {"stt": 2, "text": "Kiểm tra các nhà vệ sinh (rác nổi, nước, bảng cảnh báo, không mở nắp bồn cầu, bụi bẩn, CCDC không để đúng nơi quy định,…)"}, {"stt": 3, "text": "Khu vực phòng vé và nhà thuốc Thiện Phước (đảm bảo vệ sinh, không để CCDC chắn trước các quầy,...)"}, {"stt": 4, "text": "Các quầy hàng kinh doanh, dịch vụ (vệ sinh sạch sẽ, không lấn chiếm không gian chung,…)"}, {"stt": 5, "text": "Quầy thông tin (mặt bàn sạch sẽ, không bám bụi)"}, {"stt": 6, "text": "Khu vực đóng gói hành lý (sạch sẽ, không có rác nổi)"}, {"stt": 7, "text": "Cọc giăng line (sạch, rõ chữ, không bị bạc màu)"}, {"stt": 8, "text": "Xe đẩy hành lý (tập kết đúng vị trí, không hư hỏng,...)"}, {"stt": 9, "text": "Khu vực hút thuốc (ghế tựa sạch sẽ, không bụi bẩn, thùng đựng thuốc được thu gom sạch sẽ, không rác nổi, tàn thuốc xung quanh)"}, {"stt": 10, "text": "Các văn phòng cho thuê (không lấn chiếm khoảng không gian chung, vệ sinh sạch sẽ)"}, {"stt": 11, "text": "Nhân viên HM đảm bảo có mặt tại vị trí trực"}, {"stt": 12, "text": "Cây xanh (không bị héo, sâu bệnh, vàng lá)"}]}, {"title": "TRANG THIẾT BỊ", "items": [{"stt": 13, "text": "Các bảng chỉ dẫn (Signage) (Sáng, không bị vỡ,...)"}, {"stt": 14, "text": "Các màn hình hiển thị thông tin các chuyến bay (FIDS) (hoạt động bình thường, hiển thị đúng thông tin, không bị nứt vỡ và bị nhiễu)"}, {"stt": 15, "text": "Các tiện ích: máy IVK, máy AED, màn hình đánh giá quầy thủ tục, màn hình đánh giá NVS (hoạt động ổn định, kết nối tốt, đầy đủ tem)"}]}], "GSCC GA ĐẾN": [{"title": "TÌNH TRẠNG VỆ SINH", "items": [{"stt": 1, "text": "Vệ sinh chung (ghế ngồi, bề mặt sàn, thùng rác, tường kính, thang máy,…)"}, {"stt": 2, "text": "Kiểm tra các nhà vệ sinh (rác nổi, nước, bảng cảnh báo, không mở nắp bồn cầu, bụi bẩn, CCDC không để đúng nơi quy định,…)"}, {"stt": 3, "text": "Cọc giăng line (sạch, rõ chữ, không bị bạc màu)"}, {"stt": 4, "text": "Xe đẩy hành lý (tập kết đúng vị trí, không hư hỏng,...)"}, {"stt": 5, "text": "Các quầy hàng kinh doanh, dịch vụ (vệ sinh sạch sẽ, không lấn chiếm không gian chung,…)"}, {"stt": 6, "text": "Vệ sinh quầy thông tin Grab, trang phục nhân viên Grab, bảng biểu của Grab đặt để hợp lý, không nứt vỡ, nội dung phù hợp…"}, {"stt": 7, "text": "Các quầy đổi tiền giữ vệ sinh chung (cửa kính, ghế ngồi trước quầy,...), không mở cửa mời chào, chèo kéo khách"}, {"stt": 8, "text": "Quầy giữ hành lý và Sim card (đảm bảo vệ sinh,...)"}, {"stt": 9, "text": "Kho Standee (đảm bảo vệ sinh, CCDC để gọn gàng, có lối đi,...)"}, {"stt": 10, "text": "Nhân viên HM đảm bảo có mặt tại vị trí trực"}, {"stt": 11, "text": "Cây xanh (không bị héo, sâu bệnh, vàng lá)"}, {"stt": 12, "text": "Vệ sỹ NCT đảm bảo số lượng, trang phục, tác phong làm việc, hướng dẫn người và phương tiện giao thông kịp thời, đảm bảo luồng tuyến, vị trí đậu đỗ trong bãi"}, {"stt": 13, "text": "Tình trạng khách và người đưa tiễn nằm dài ở các khu vực ghế quanh bồn cây, bể nước; hút thuốc đúng nơi quy định"}, {"stt": 14, "text": "Tác phong, trang phục, thái độ phục vụ của nhân viên Taxi, ý thức giữ vệ sinh chung (xả rác, hút thuốc không đúng khu vực quy định...)"}]}, {"title": "TRANG THIẾT BỊ", "items": [{"stt": 15, "text": "Các bảng chỉ dẫn (Signage) (Sáng, không bị vỡ,...)"}, {"stt": 16, "text": "Các màn hình hiển thị thông tin các chuyến bay (FIDS) (hoạt động bình thường, hiển thị đúng thông tin, không bị nứt vỡ và bị nhiễu)"}, {"stt": 17, "text": "Các tiện ích: Máy bán nước tự động, kiosk Call Center, máy ATM (hoạt động tốt,...)"}]}], "GSCL GA ĐI": [{"title": "TÌNH TRẠNG VỆ SINH", "items": [{"stt": 1, "text": "Vệ sinh chung (ghế ngồi, bề mặt sàn, thùng rác, tường kính, thang máy,…)"}, {"stt": 2, "text": "Kiểm tra các nhà vệ sinh (rác nổi, nước, bảng cảnh báo, không mở nắp bồn cầu, bụi bẩn, CCDC không để đúng nơi quy định,…)"}, {"stt": 3, "text": "Các quầy hàng kinh doanh, dịch vụ (vệ sinh sạch sẽ, không lấn chiếm không gian chung,…)"}, {"stt": 4, "text": "Thảm tại khu vực ANSC tại tầng 2 (sạch sẽ, không bốc mùi, không ẩm mốc, không bị rách)"}, {"stt": 5, "text": "Khay hành lý khu vực ANSC tại tầng 2 (sạch sẽ, không ẩm ướt, bốc mùi)"}, {"stt": 6, "text": "Cây nước uống miễn phí (hoạt động bình thường, sạch sẽ)"}, {"stt": 7, "text": "Phòng hút thuốc (thùng đựng tàn thuốc và thùng rác được thu gom thường xuyên, máy hút mùi hoạt động)"}, {"stt": 8, "text": "Phòng cầu nguyện (thảm không có bụi bẩn và mùi hôi, không có rác nổi, sàn khô ráo, gương soi sạch sẽ)"}, {"stt": 9, "text": "Phòng trang điểm đầu Nam (vệ sinh sạch sẽ, CCDC không để chắn cửa phòng kỹ thuật)"}, {"stt": 10, "text": "Xe nôi em bé (đủ số lượng, không bị bẩn)"}, {"stt": 11, "text": "Kiểm tra vệ sinh chung tại các cửa lên tàu bay và khu vực cầu hành khách (rác được thu gom, đảm bảo các cửa từ đã được đóng và chốt khoá, thảm tại cầu hành khách không có bụi, không mùi, không sờn rách)"}, {"stt": 12, "text": "Cọc giăng line (sạch, rõ chữ, không bị bạc màu)"}, {"stt": 13, "text": "Quầy boarding (sạch sẽ, không còn giấy tờ tại quầy, CCDC của HHK được thu dọn, cân HLXT)"}, {"stt": 14, "text": "Phòng nuôi con bằng sữa mẹ (Đảm bảo vệ sinh, trang thiết bị hoạt động tốt)"}, {"stt": 15, "text": "Khu vui chơi dành cho trẻ em (sạch sẽ, khách người lớn có vào không, HIRA)"}, {"stt": 16, "text": "Xe mua sắm (đủ số lượng, không hư hỏng)"}, {"stt": 17, "text": "Cây xanh (không bị héo, sâu bệnh, vàng lá)"}, {"stt": 18, "text": "Nhân viên HM đảm bảo có mặt tại vị trí trực"}]}, {"title": "TRANG THIẾT BỊ", "items": [{"stt": 19, "text": "Các màn hình hiển thị thông tin các chuyến bay (FIDS) (hoạt động bình thường, hiển thị đúng thông tin, không bị nứt vỡ và bị nhiễu)"}, {"stt": 20, "text": "Các bảng chỉ dẫn (Signage) (Sáng, không bị vỡ,...)"}, {"stt": 21, "text": "Các tiện ích: Call center, máy IVK, máy AED, màn hình đánh giá NVS (hoạt động ổn định, kết nối tốt, đầy đủ tem)"}, {"stt": 22, "text": "Tình trạng hoạt động của máy bán nước tự động, máy gắp thú, ghế massage và tính sẵn sàng của các tiện ích giải trí"}, {"stt": 23, "text": "Khu vực bàn làm việc (đèn đọc sách, ghế ngồi không bị hỏng..)"}]}], "GSCL GA ĐẾN": [{"title": "TÌNH TRẠNG VỆ SINH", "items": [{"stt": 1, "text": "Vệ sinh chung (ghế ngồi, bề mặt sàn, thùng rác, tường kính, thang máy,…)"}, {"stt": 2, "text": "Kiểm tra các nhà vệ sinh (rác nổi, nước, bảng cảnh báo, không mở nắp bồn cầu, bụi bẩn, CCDC không để đúng nơi quy định,…)"}, {"stt": 3, "text": "Cọc giăng line (sạch, rõ chữ, không bị bạc màu)"}, {"stt": 4, "text": "Xe đẩy hành lý (tập kết đúng vị trí, không hư hỏng,...)"}, {"stt": 5, "text": "Cây xanh (không bị héo, sâu bệnh, vàng lá)"}, {"stt": 6, "text": "Khu vực quầy LnF (sạch sẽ, vệ sinh, gọn gàng, ngăn nắp)"}, {"stt": 7, "text": "Khu vực HLQK (nhân viên PVMĐ có đóng cửa sau khi sử dụng)"}, {"stt": 8, "text": "Các quầy Sim card, quầy dịch vụ, quầy hàng Lotte Duty Free (đảm bảo vệ sinh, tác phong và thái độ của nhân viên,...)"}, {"stt": 9, "text": "Xe nôi em bé (hoạt động tốt, chắc chắn, sạch sẽ)"}, {"stt": 10, "text": "Phòng câu lưu (sạch sẽ, tình trạng chăn ga gối, trang thiết bị hoạt động tốt)"}, {"stt": 11, "text": "Cây nước uống miễn phí (hoạt động bình thường, sạch sẽ)"}, {"stt": 12, "text": "Nhân viên HM đảm bảo có mặt tại vị trí trực"}]}, {"title": "TRANG THIẾT BỊ", "items": [{"stt": 13, "text": "Các màn hình hiển thị thông tin các chuyến bay (FIDS) (hoạt động bình thường, hiển thị đúng thông tin, không bị nứt vỡ và bị nhiễu)"}, {"stt": 14, "text": "Các bảng chỉ dẫn (Signage) (Sáng, không bị vỡ,...)"}, {"stt": 15, "text": "Các tiện ích: Call center, máy IVK, máy AED, màn hình đánh giá NVS (hoạt động ổn định, kết nối tốt, đầy đủ tem)"}, {"stt": 16, "text": "Tình trạng hoạt động của máy bán nước tự động"}]}]};
+  const LOCATION_LABELS = {"GSCC GA ĐI": "GSCC · Ga đi", "GSCC GA ĐẾN": "GSCC · Ga đến", "GSCL GA ĐI": "GSCL · Ga đi", "GSCL GA ĐẾN": "GSCL · Ga đến"};
+  const LOCATIONS = Object.keys(CHECKLIST_DATA);
+
+  const ICON_CHECK = '<path d="M20 6L9 17l-5-5"/>';
+  const ICON_X = '<path d="M18 6L6 18M6 6l12 12"/>';
+
+  function locationItemCount(loc){
+    return CHECKLIST_DATA[loc].reduce((sum, s) => sum + s.items.length, 0);
+  }
+  function sectionCatKey(title){
+    if(title.indexOf('THIẾT BỊ') !== -1) return 'equip';
+    return 'hygiene';
+  }
+  function catLabel(key){
+    return key === 'equip' ? 'equip' : 'hygiene';
+  }
+
+  let currentLocation = LOCATIONS[0];
+  let currentUserName = '';
+  let currentShift = '';
+  let completedLocations = new Set();
+  let results = {};
+  LOCATIONS.forEach(loc => results[loc] = {});
+
+  function todayStr(){
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  function getItemState(loc, stt){
+    if(!results[loc][stt]){
+      results[loc][stt] = { status: undefined, note: '', photo: null, photoName: '', photoDirty: false, syncStatus: 'idle' };
+    }
+    return results[loc][stt];
+  }
+
+  function findItemText(loc, stt){
+    const sections = CHECKLIST_DATA[loc];
+    for(const s of sections){
+      for(const it of s.items){
+        if(it.stt === stt) return it.text;
+      }
+    }
+    return '';
+  }
+
+  // Gửi 1 hạng mục lên Google Sheet (tự tạo dòng mới hoặc cập nhật dòng đã có,
+  // khớp theo Ngày + Ca + Vị trí + STT để không lẫn dữ liệu giữa các ca)
+  function syncItem(loc, stt){
+    const state = getItemState(loc, stt);
+    if(!state.status) return; // chưa đánh giá thì chưa có gì để lưu
+
+    state.syncStatus = 'saving';
+    renderChecklist();
+
+    const payload = {
+      ngay: todayStr(),
+      ca: currentShift,
+      viTri: loc,
+      stt: stt,
+      hangMuc: findItemText(loc, stt),
+      trangThai: state.status === 'dat' ? 'Đạt' : 'Không đạt',
+      ghiChu: state.note || '',
+      nguoiKiemTra: currentUserName,
+      image: state.photoDirty ? state.photo : null,
+      imageName: state.photoName || ''
+    };
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'text/plain;charset=utf-8'}, // tránh preflight CORS với Apps Script
+      body: JSON.stringify(payload)
+    })
+      .then(res => res.json())
+      .then(json => {
+        state.syncStatus = json.result === 'success' ? 'saved' : 'error';
+        if(json.result === 'success') state.photoDirty = false;
+        renderChecklist();
+      })
+      .catch(() => {
+        state.syncStatus = 'error';
+        renderChecklist();
+      });
+  }
+
+  function compressImage(file, callback){
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const maxW = 1000;
+        const scale = Math.min(1, maxW / img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        callback(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ---------- THEME ----------
+  const MOON_ICON = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  const SUN_ICON = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>';
+  let currentTheme = 'dark';
+  function applyTheme(theme){
+    currentTheme = theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('themeIcon').innerHTML = theme === 'dark' ? MOON_ICON : SUN_ICON;
+  }
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+  });
+  applyTheme('dark');
+
+  // ---------- LOGIN ----------
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('loginName').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    const ca = document.getElementById('loginCa').value;
+    if(!name || !pass){
+      loginError.style.display = 'block';
+      return;
+    }
+    loginError.style.display = 'none';
+    document.getElementById('userDisplay').textContent = name + ' · ' + ca;
+    currentUserName = name;
+    currentShift = ca;
+    completedLocations = new Set();
+    document.getElementById('loginView').style.display = 'none';
+    document.getElementById('mainView').style.display = 'block';
+    renderLocationSelect();
+    renderChecklist();
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    document.getElementById('mainView').style.display = 'none';
+    document.getElementById('loginView').style.display = 'flex';
+    document.getElementById('loginPass').value = '';
+  });
+
+  // ---------- LOCATION DROPDOWN ----------
+  function renderLocationSelect(){
+    const select = document.getElementById('locationSelect');
+    select.innerHTML = '';
+    LOCATIONS.forEach(loc => {
+      const opt = document.createElement('option');
+      opt.value = loc;
+      opt.textContent = (LOCATION_LABELS[loc] || loc) + ' (' + locationItemCount(loc) + ' hạng mục)' +
+        (completedLocations.has(loc) ? ' — Đã hoàn tất ✓' : '');
+      if(loc === currentLocation) opt.selected = true;
+      select.appendChild(opt);
+    });
+    select.onchange = () => { currentLocation = select.value; renderChecklist(); };
+  }
+
+  // ---------- CHECKLIST ----------
+  function renderChecklist(){
+    const body = document.getElementById('checklistBody');
+    body.innerHTML = '';
+    const sections = CHECKLIST_DATA[currentLocation];
+
+    sections.forEach(section => {
+      const catKey = sectionCatKey(section.title);
+
+      const block = document.createElement('div');
+      block.className = 'cat-block';
+
+      const chip = document.createElement('div');
+      chip.className = 'cat-chip ' + catKey;
+      chip.innerHTML = '<span class="dot"></span>' + section.title;
+      block.appendChild(chip);
+      body.appendChild(block);
+
+      section.items.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'item-row ' + catKey;
+
+        const sttBadge = document.createElement('div');
+        sttBadge.className = 'item-stt';
+        sttBadge.textContent = item.stt;
+
+        const bodyDiv = document.createElement('div');
+        bodyDiv.className = 'item-body';
+
+        const text = document.createElement('div');
+        text.className = 'item-text';
+        text.textContent = item.text;
+
+        const toggle = document.createElement('div');
+        toggle.className = 'item-toggle';
+
+        const datBtn = document.createElement('button');
+        datBtn.type = 'button';
+        datBtn.className = 'tbtn dat';
+        datBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' + ICON_CHECK + '</svg>Đạt';
+
+        const khongBtn = document.createElement('button');
+        khongBtn.type = 'button';
+        khongBtn.className = 'tbtn khong';
+        khongBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' + ICON_X + '</svg>Không đạt';
+
+        const loc = currentLocation;
+        const stt = item.stt;
+        const state = getItemState(loc, stt);
+        if(state.status === 'dat') datBtn.classList.add('sel');
+        if(state.status === 'khong') khongBtn.classList.add('sel');
+
+        datBtn.onclick = () => {
+          const st = getItemState(loc, stt);
+          st.status = 'dat'; st.note = ''; st.photo = null; st.photoName = ''; st.photoDirty = false;
+          syncItem(loc, stt);
+        };
+        khongBtn.onclick = () => {
+          const st = getItemState(loc, stt);
+          st.status = 'khong';
+          syncItem(loc, stt);
+        };
+
+        toggle.appendChild(datBtn);
+        toggle.appendChild(khongBtn);
+        bodyDiv.appendChild(text);
+        bodyDiv.appendChild(toggle);
+
+        if(state.status && state.syncStatus && state.syncStatus !== 'idle'){
+          const syncEl = document.createElement('div');
+          syncEl.className = 'sync-status ' + state.syncStatus;
+          if(state.syncStatus === 'saving'){
+            syncEl.textContent = 'Đang lưu…';
+          } else if(state.syncStatus === 'saved'){
+            syncEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="11" height="11">' + ICON_CHECK + '</svg>Đã lưu';
+          } else if(state.syncStatus === 'error'){
+            syncEl.textContent = 'Chưa lưu được — chạm để thử lại';
+            syncEl.onclick = () => syncItem(loc, stt);
+          }
+          bodyDiv.appendChild(syncEl);
+        }
+
+        if(state.status === 'khong'){
+          const detail = document.createElement('div');
+          detail.className = 'item-detail';
+
+          const noteField = document.createElement('div');
+          noteField.className = 'detail-field';
+          const noteLabel = document.createElement('label');
+          noteLabel.textContent = 'Ghi chú';
+          const noteInput = document.createElement('textarea');
+          noteInput.placeholder = 'Mô tả chi tiết vấn đề phát hiện...';
+          noteInput.value = state.note || '';
+          noteInput.onchange = () => { state.note = noteInput.value; syncItem(loc, stt); };
+          noteField.appendChild(noteLabel);
+          noteField.appendChild(noteInput);
+
+          const photoField = document.createElement('div');
+          photoField.className = 'detail-field';
+          const photoLabel = document.createElement('label');
+          photoLabel.textContent = 'Hình ảnh minh chứng';
+          photoField.appendChild(photoLabel);
+
+          const tile = document.createElement('label');
+          tile.className = 'detail-photo-tile';
+          tile.innerHTML = '<span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.3"/></svg></span><span class="txt"><b>Chụp / chọn ảnh</b>Bằng chứng hạng mục không đạt</span>';
+
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = 'image/*';
+          fileInput.capture = 'environment';
+          fileInput.style.display = 'none';
+          fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            compressImage(file, (base64) => {
+              state.photo = base64;
+              state.photoName = file.name;
+              state.photoDirty = true;
+              syncItem(loc, stt);
+            });
+          };
+          tile.appendChild(fileInput);
+          photoField.appendChild(tile);
+
+          if(state.photo){
+            const preview = document.createElement('div');
+            preview.className = 'detail-preview';
+            const img = document.createElement('img');
+            img.src = state.photo;
+            preview.appendChild(img);
+            photoField.appendChild(preview);
+          }
+
+          detail.appendChild(noteField);
+          detail.appendChild(photoField);
+          bodyDiv.appendChild(detail);
+        }
+
+        row.appendChild(sttBadge);
+        row.appendChild(bodyDiv);
+        body.appendChild(row);
+      });
+    });
+
+    updateProgress();
+  }
+
+  function updateProgress(){
+    const sections = CHECKLIST_DATA[currentLocation];
+    let total = 0, dat = 0, khong = 0;
+    sections.forEach(s => s.items.forEach(it => {
+      total++;
+      const v = results[currentLocation][it.stt];
+      if(v && v.status === 'dat') dat++;
+      if(v && v.status === 'khong') khong++;
+    }));
+    const answered = dat + khong;
+    const pct = total ? Math.round((answered/total)*100) : 0;
+
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statOk').textContent = dat;
+    document.getElementById('statBad').textContent = khong;
+    document.getElementById('ringPct').textContent = pct + '%';
+
+    const circumference = 175.9;
+    const offset = circumference - (circumference * pct / 100);
+    document.getElementById('ringFg').style.strokeDashoffset = offset;
+  }
+
+  const toast = document.getElementById('toast');
+  function showToast(msg, type){
+    toast.textContent = msg;
+    toast.classList.remove('ok', 'error');
+    if(type) toast.classList.add(type);
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove('show'), 4200);
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    const sections = CHECKLIST_DATA[currentLocation];
+    const missingAnswer = [];
+    const missingDetail = [];
+
+    sections.forEach(s => s.items.forEach(it => {
+      const st = results[currentLocation][it.stt];
+      if(!st || !st.status){
+        missingAnswer.push(it.stt);
+      } else if(st.status === 'khong' && (!st.note || !st.note.trim() || !st.photo)){
+        missingDetail.push(it.stt);
+      }
+    }));
+
+    if(missingAnswer.length > 0){
+      showToast('Còn ' + missingAnswer.length + ' hạng mục chưa đánh giá (STT: ' + missingAnswer.join(', ') + ').', 'error');
+      return;
+    }
+    if(missingDetail.length > 0){
+      showToast('Hạng mục Không đạt cần đủ ảnh minh chứng và ghi chú (STT: ' + missingDetail.join(', ') + ').', 'error');
+      return;
+    }
+
+    let pending = 0;
+    sections.forEach(s => s.items.forEach(it => {
+      const st = results[currentLocation][it.stt];
+      if(st.syncStatus !== 'saved'){
+        pending++;
+        syncItem(currentLocation, it.stt);
+      }
+    }));
+
+    completedLocations.add(currentLocation);
+    renderLocationSelect();
+
+    showToast(
+      pending > 0
+        ? 'Đủ điều kiện — đang đồng bộ lại ' + pending + ' hạng mục còn thiếu...'
+        : 'Đã hoàn tất kiểm tra vị trí này. Chọn vị trí khác để tiếp tục, hoặc đăng xuất khi xong cả ca.',
+      'ok'
+    );
+  });
+</script>
+</body>
+</html>
